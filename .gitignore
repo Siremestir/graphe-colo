@@ -1,0 +1,7 @@
+*.o
+
+assets
+
+main 
+
+test_graph
