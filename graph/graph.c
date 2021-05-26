@@ -175,8 +175,9 @@ int degree(graph myGraph, node x) {
     }
     int cpt = 0;
 
-    for (int i = 0; i < myGraph->size; i++) {
-        cpt += myGraph->content[x -1][i] == 0;
+    for (int i = 1; i <= myGraph->size; i++) {
+        //cpt += myGraph->content[x -1][i] == 0;
+        cpt += edgeExists(myGraph, x, i);
     }
 
     return cpt;
