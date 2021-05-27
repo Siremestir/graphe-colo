@@ -5,12 +5,28 @@
 
 #include <time.h>
 
-void genererAretesAleatoires(graph_colo graphe, node s);
+color** genererPopulationAleatoire(int taille, graph_colo graphe);
 
-graph_colo genererGrapheAleatoire(int taille);
+color* genererColorationAleatoire(graph_colo graphe);
 
-void muterGraphe(graph_colo graphe);
+int creeConflit(graph_colo graphe, color* tableauCouleur, node noeudModifie);
 
-graph_colo selectionnerGraphe(graph_colo* graphes);
+int contientConflit(graph_colo graphe, color* tableauCouleur);
+
+void muterColoration(color* coloration, int taille);
+
+int nombreCouleurs(color* coloration, int taille);
+
+int pireColoration(color** population, int taillePopulation, int tailleColoration);
+
+int meilleureColoration(color** population, int taillePopulation, int tailleColoration);
+
+color** selectionnerColorations(color** colorations, int taillePopulation, graph_colo graphe);
+
+color* faireEnfant(color* parent1, color* parent2, int taille);
+
+color** croiserColorations(color** population, int taillePopulation, int tailleColoration);
+
+void colorationGenetique(graph_colo graphe, int iterations, int taillePopulation);
 
 #endif

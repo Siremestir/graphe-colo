@@ -26,10 +26,8 @@ int main()
         {
             nbCouleurs++;
         }
-        
     }
-
-    color maxColor = getMaxColor(graphe_colo);
+    
     printf("Nb couleurs : %i\n", nbCouleurs);
     return 1;
 }
