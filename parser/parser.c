@@ -22,6 +22,10 @@ int readLine(FILE *myFile, char *buffer)
 graph readGraph(char *filename)
 {
     FILE *source = fopen(filename, "r");
+    if (source == NULL)
+    {
+        printf("Source is NULL\n");
+    }
 
     char buffer[BUFFER_SIZE];
 
@@ -94,7 +98,7 @@ void writePumlColo(char *filename, graph_colo myGraph)
 {
     FILE *output = fopen(filename, "w");
 
-    fprintf(output, "@startuml\n\n");
+    fprintf(output, "@startuml %s\n\n", filename);
 
     color maxColor = getMaxColor(myGraph);
     unsigned int colorMaxSize = 256 * 256 * 256;
