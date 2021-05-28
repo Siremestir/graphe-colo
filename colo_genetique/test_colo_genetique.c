@@ -6,7 +6,7 @@ int main()
     graph graphe = readGraph("../graphes/inithx.i.2.col");
     graph_colo graphe_colo = createGraphColo(graphe->size);
     graphe_colo->g = graphe;
-    colorationGenetique(graphe_colo, 30, 100);
+    colorationGenetique(graphe_colo, 2, 10);
     /*writePumlColo("test_colo_genetique.puml", graphe_colo);
     
     printf("Nb couleurs : %i\n", nombreCouleurs(graphe_colo->colors, graphe_colo->g->size));*/

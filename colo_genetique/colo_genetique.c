@@ -15,12 +15,12 @@
     }
 }*/
 
-int creeConflit(graph_colo graphe, color* tableauCouleur, node noeudModifie)
+int creeConflit(graph_colo graphe, color *tableauCouleur, node noeudModifie)
 {
-    return isNeighborColoredWithColoredColor(graphe, noeudModifie, tableauCouleur[noeudModifie-1]);
+    return isNeighborColoredWithColoredColor(graphe, noeudModifie, tableauCouleur[noeudModifie - 1]);
 }
 
-int contientConflit(graph_colo graphe, color* tableauCouleur)
+int contientConflit(graph_colo graphe, color *tableauCouleur)
 {
     for (node s = 1; s <= graphe->g->size; s++)
     {
@@ -32,62 +32,64 @@ int contientConflit(graph_colo graphe, color* tableauCouleur)
     return 0;
 }
 
-color* genererColorationAleatoire(graph_colo graphe)
+color *genererColorationAleatoire(graph_colo graphe)
 {
-    srand(time(NULL));
-    color* coloration = malloc(sizeof(color) * graphe->g->size);
-    for (int i= 0; i<graphe->g->size; i++)
+    //srand(time(NULL));
+    color *coloration = (color *)malloc(sizeof(color) * graphe->g->size);
+    for (int i = 0; i < graphe->g->size; i++)
     {
-        coloration[i] = rand()%graphe->g->size;
+        coloration[i] = rand() % graphe->g->size;
     }
     return coloration;
 }
 
-color** genererPopulationAleatoire(int taille, graph_colo graphe)
+color **genererPopulationAleatoire(int taille, graph_colo graphe)
 {
-    color** population = (color**) malloc(sizeof(color) * taille * graphe->g->size);
-    for (int i =0; i<taille; i++)
+    srand(time(NULL));
+    color **population = (color **)malloc(sizeof(color) * taille * graphe->g->size);
+    for (int i = 0; i < taille; i++)
     {
         population[i] = genererColorationAleatoire(graphe);
     }
     return population;
 }
 
-int nombreCouleurs(color* coloration, int taille)
+int nombreCouleurs(color *coloration, int taille)
 {
-    if(coloration == NULL)
+    if (coloration == NULL)
     {
-        printf(stderr, "ERROR: nombreCouleurs appelé sur coloration nulle\n");
+        fprintf(stderr, "ERROR: nombreCouleurs appelé sur coloration nulle\n");
         exit(-1);
     }
+
+    //printf("coloration : %li\n", coloration);
     int cpt = 0;
-    for(int i = 0; i<taille; i++)
+    for (int i = 0; i < taille; i++)
     {
-        int j=0;
-        for (j; j<i; j++)
+        int j = 0;
+        for (j; j < i; j++)
         {
-            printf("%p\n", coloration);
+            /*
             if (coloration[i] == coloration[j])
             {
                 break;
-            }
+            }*/
         }
         if (i == j)
         {
-            //cpt++;
+            cpt++;
         }
     }
     return cpt;
 }
 
-void muterColoration(color* coloration, int taille)
+void muterColoration(color *coloration, int taille)
 {
-    srand(time(NULL));
-    node s = (rand()%taille) + 1; 
-    coloration[s] = rand()%nombreCouleurs(coloration, taille);
+    node s = (rand() % taille) + 1;
+    coloration[s-1] = rand() % (nombreCouleurs(coloration, taille)-1) + 1;
 }
 
-void muterPopulation(color** population, int taillePopulation, int tailleColoration)
+void muterPopulation(color **population, int taillePopulation, int tailleColoration)
 {
     for (int i = 0; i < taillePopulation; i++)
     {
@@ -95,7 +97,7 @@ void muterPopulation(color** population, int taillePopulation, int tailleColorat
     }
 }
 
-int pireColoration(color** population, int taillePopulation, int tailleColoration)
+int pireColoration(color **population, int taillePopulation, int tailleColoration)
 {
     int index = 0;
     int nbCouleurs = 0;
@@ -103,7 +105,7 @@ int pireColoration(color** population, int taillePopulation, int tailleColoratio
     {
         if (population[i] != NULL)
         {
-            if(nbCouleurs<nombreCouleurs(population[i], tailleColoration))
+            if (nbCouleurs < nombreCouleurs(population[i], tailleColoration))
             {
                 index = i;
                 nbCouleurs = nombreCouleurs(population[i], tailleColoration);
@@ -113,7 +115,7 @@ int pireColoration(color** population, int taillePopulation, int tailleColoratio
     return index;
 }
 
-int meilleureColoration(color** population, int taillePopulation, int tailleColoration)
+int meilleureColoration(color **population, int taillePopulation, int tailleColoration)
 {
     int index = 0;
     int nbCouleurs = tailleColoration;
@@ -121,7 +123,7 @@ int meilleureColoration(color** population, int taillePopulation, int tailleColo
     {
         if (population[i] != NULL)
         {
-            if(nbCouleurs>nombreCouleurs(population[i], tailleColoration))
+            if (nbCouleurs > nombreCouleurs(population[i], tailleColoration))
             {
                 index = i;
                 nbCouleurs = nombreCouleurs(population[i], tailleColoration);
@@ -131,17 +133,18 @@ int meilleureColoration(color** population, int taillePopulation, int tailleColo
     return index;
 }
 
-color** selectionnerColorations(color** colorations, int taillePopulation, graph_colo graphe)
+color **selectionnerColorations(color **colorations, int taillePopulation, graph_colo graphe)
 {
     //TODO: réduire de moitié colorations
     // D'abord jeter les colorations non-viables
     // Ensuite si il reste des colorations à éjecter, les colorations les plus lourdes
-    int moitieTaille = (int) taillePopulation/2;
-    color** res = (color**)malloc(sizeof(colorations[0])*moitieTaille);
-    color* coloViables[taillePopulation];
+    int moitieTaille = (int)taillePopulation / 2;
+    color **res = (color **)malloc(sizeof(colorations[0]) * moitieTaille);
+    color *coloViables[taillePopulation];
 
     // Initialisation res
-    for (int i = 0; i < moitieTaille; i++){
+    for (int i = 0; i < moitieTaille; i++)
+    {
         res[i] = NULL;
     }
 
@@ -149,12 +152,13 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
     for (int i = 0; i < taillePopulation; i++)
     {
         // On s'assure que res n'est pas plein
-        if (res[moitieTaille-1] != NULL)
+        if (res[moitieTaille - 1] != NULL)
         {
-            if(!contientConflit(graphe, colorations[i]))
+            if (!contientConflit(graphe, colorations[i]))
             {
                 coloViables[i] = colorations[i];
-            } else
+            }
+            else
             {
                 coloViables[i] = NULL;
             }
@@ -163,7 +167,7 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
 
     // Compter les colorations viables
     int cpt = 0;
-    for (int i = 0; i<taillePopulation; i++)
+    for (int i = 0; i < taillePopulation; i++)
     {
         cpt += coloViables[i] != NULL;
     }
@@ -173,7 +177,7 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
     int index;
     if (cpt < moitieTaille)
     {
-        index = moitieTaille-cpt;
+        index = moitieTaille - cpt;
         // On sélectionne les premières colos non-viables qui viennent
         for (int i = 0; i < index; i++)
         {
@@ -189,7 +193,7 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
     }
     else if (cpt > moitieTaille)
     {
-        int aEnlever = cpt-moitieTaille;
+        int aEnlever = cpt - moitieTaille;
         for (int i = 0; i < aEnlever; i++)
         {
             int indexPireColo = pireColoration(coloViables, taillePopulation, graphe->g->size);
@@ -197,12 +201,12 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
         }
 
         index = 0;
-    }/*
+    }
     else
     {
         index = 0;
     }
-/*
+
     for (int i = 0; i < taillePopulation; i++)
     {
         if (coloViables[i] != NULL)
@@ -210,43 +214,52 @@ color** selectionnerColorations(color** colorations, int taillePopulation, graph
             res[index] = coloViables[i];
             index++;
         }
-        
-    }*/
+    }
 
     return res;
 }
 
-color* faireEnfant(color* parent1, color* parent2, int taille)
+color *faireEnfant(color *parent1, color *parent2, int taille)
 {
     srand(time(NULL));
-    color* enfant = (color*)malloc(sizeof(parent1));
-    for(int i = 0; i < taille; i++)
+    color *enfant = (color *)malloc(sizeof(parent1));
+    for (int i = 0; i < taille; i++)
     {
-        enfant[i] = rand()%2 ? parent1[i] : parent2[i];
+        enfant[i] = rand() % 2 ? parent1[i] : parent2[i];
     }
     return enfant;
 }
 
-color** croiserColorations(color** population, int taillePopulation, int tailleColoration)
+color **croiserColorations(color **population, int taillePopulation, int tailleColoration)
 {
     srand(time(NULL));
-    int distance = rand()%taillePopulation;
-    color** res = (color**) malloc(sizeof(population) * 2);
-    for(int i = 0; i < taillePopulation; i++)
+    int distance = rand() % taillePopulation;
+    color **res = (color **)malloc(sizeof(population) * 2);
+    for (int i = 0; i < taillePopulation; i++)
     {
-        res[i] = faireEnfant(population[i], population[(i+distance)%taillePopulation], tailleColoration);
+        res[i] = faireEnfant(population[i], population[(i + distance) % taillePopulation], tailleColoration);
     }
     return res;
 }
 
 void colorationGenetique(graph_colo graphe, int iterations, int taillePopulation)
 {
-    color** population = genererPopulationAleatoire(taillePopulation, graphe);
-    for (int i=0; i<iterations; i++)
+    color **population = genererPopulationAleatoire(taillePopulation, graphe);
+    //muterPopulation(population, taillePopulation, graphe->g->size);
+    int tailleMoitie = (int)taillePopulation/2;
+    int taillePopIteree = tailleMoitie*2;
+    color** moitiePopulation = selectionnerColorations(population, taillePopulation, graphe);
+    //color** populationIteree = croiserColorations(moitiePopulation, tailleMoitie, graphe->g->size);
+    for (int i = 0; i < taillePopulation; i++)
     {
-        //muterPopulation(population, taillePopulation, graphe->g->size);
-        population = selectionnerColorations(population, taillePopulation, graphe);
-        //population = croiserColorations(population, taillePopulation, graphe->g->size);
+        printf("%i \ncoloration : %i \n", i, population[i][0]);
+
+        printf("coloration : %i \n", population[i][taillePopulation-1]);
     }
-    //graphe->colors = population[meilleureColoration(population, taillePopulation, graphe->g->size)];
+    for (int i = 1; i < iterations; i++)
+    {
+        //muterPopulation(populationIteree, taillePopIteree, graphe->g->size);
+        //populationIteree = croiserColorations(moitiePopulation, tailleMoitie, graphe->g->size);
+    }
+    //graphe->colors = populationIteree[meilleureColoration(populationIteree, taillePopIteree, graphe->g->size)];
 }
